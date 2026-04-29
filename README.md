@@ -117,6 +117,8 @@ skills/sgc/
 └── references/
     ├── agentic-coding-patterns.md        # 7 expanded coding-agent heuristics
     ├── extraction-method.md              # Triple Verification distillation methodology
+    ├── evolution-method.md               # Self-evolution distillation pipeline
+    ├── evolution-log.md                  # Captured failures and candidate rule updates
     └── verification-playbook.md          # Evidence patterns by change type
 ```
 
@@ -131,6 +133,18 @@ This skill uses a Triple Verification filter to ensure every rule is robust:
 3. **Exclusive**: if inverted, it is still a coherent (though different) philosophy
 
 A rule must pass all three checks to enter `SKILL.md`. See [references/extraction-method.md](skills/sgc/references/extraction-method.md) for the full pipeline.
+
+## Self-Evolution
+
+The skill can improve itself from real usage. Inspired by the [Darwin Skill](https://github.com/alchaincyf/darwin-skill) concept, it uses a lightweight evolution loop:
+
+```
+Capture failures during work → Cluster similar gaps → Filter through Triple Verification → Place validated rules
+```
+
+When the skill's guidance is insufficient during a task, the agent captures the gap in `references/evolution-log.md`. When enough evidence accumulates, the distillation pipeline proposes a rule update through the existing Triple Verification filter. All SKILL.md edits require human confirmation and use git checkpoints for rollback.
+
+See [references/evolution-method.md](skills/sgc/references/evolution-method.md) for the full methodology.
 
 ## Verification
 

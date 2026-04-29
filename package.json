@@ -1,6 +1,6 @@
 {
   "name": "source-grounded-coder-skill",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Portable Agent Skill for source-grounded coding, debugging, review, and verification.",
   "license": "MIT",
   "type": "module",
