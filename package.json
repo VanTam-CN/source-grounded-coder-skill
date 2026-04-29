@@ -1,0 +1,32 @@
+{
+  "name": "source-grounded-coder-skill",
+  "version": "0.2.0",
+  "description": "Portable Agent Skill for source-grounded coding, debugging, review, and verification.",
+  "license": "MIT",
+  "type": "module",
+  "author": "Source Grounded Coder contributors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VanTam-CN/source-grounded-coder-skill.git"
+  },
+  "keywords": [
+    "agent-skills",
+    "coding-agent",
+    "codex",
+    "claude-code",
+    "opencode",
+    "software-engineering",
+    "verification"
+  ],
+  "files": [
+    "skills/",
+    "scripts/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "install-skill": "node scripts/install.mjs",
+    "validate": "node scripts/validate-skill.mjs"
+  }
+}

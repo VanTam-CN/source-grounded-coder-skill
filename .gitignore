@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local agent/tool permissions should not be published.
+.claude/settings.local.json
+
