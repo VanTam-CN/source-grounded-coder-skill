@@ -1,6 +1,18 @@
 # Evolution Method
 
-How this skill captures real-world failures and distills them into rule updates. The mechanism is lightweight: markdown files, git for rollback, human confirmation for edits. No external dependencies.
+How this skill captures real-world failures and distills them into rule updates. Inspired by [self-improving-agent](https://github.com/pskoett/self-improving-agent) and [Darwin Skill](https://github.com/alchaincyf/darwin-skill). Lightweight: markdown files, git for rollback, human confirmation for edits. No external dependencies.
+
+## Capture Location
+
+Captures go to the **project-local** `.sgc/` directory, not the installed skill package. This prevents:
+- Polluting globally installed skill packages with task-specific data
+- Writing business-sensitive information into a distributable artifact
+- Permission failures on read-only global install directories
+
+Capture precedence:
+1. Project-local `.sgc/evolution-log.md` (default, always available)
+2. Final report snippet in task output (if `.sgc/` is not writable)
+3. Skill source repository (only in explicit evolution mode, with user authorization)
 
 ## When to Capture
 
@@ -18,46 +30,62 @@ Do NOT capture:
 - Failures caused by the environment (missing dependencies, network issues, sandbox limits).
 - One-off user preferences that do not generalize.
 - Failures where the skill's guidance was correct but the agent ignored it.
+- Secrets, tokens, private keys, or full source/config files.
 
 ## Entry Format
 
-Append to `evolution-log.md` under Active Entries:
+Append to `.sgc/evolution-log.md` under Active Entries:
 
 ```markdown
-### [ISO-8601 timestamp] trigger: [Operating Loop step] | section: [SKILL.md section]
+### [EVO-YYYYMMDD-XXX] section: [SKILL.md section] | priority: low|medium|high
 
+**Logged**: ISO-8601 timestamp
+**Status**: pending
 **Gap**: [one sentence describing what was missing or wrong]
 **Evidence**: [abbreviated command output, user feedback, or error message]
 **Candidate rule**: [IF-THEN format, one line]
+**Recurrence-Count**: 1
+**First-Seen**: YYYY-MM-DD
+**Last-Seen**: YYYY-MM-DD
 ```
+
+ID format: `EVO-YYYYMMDD-XXX` where XXX is a sequential number or random 3 chars.
 
 ## Distillation Pipeline
 
 ### Phase 1: Accumulate
 
-Entries collect during normal work. No action needed until a user requests evolution.
+Entries collect during normal work in `.sgc/evolution-log.md`. No action until the user requests evolution.
 
 ### Phase 2: Cluster
 
-When the user requests evolution (natural language trigger, or after task completion if the log has entries):
+When the user requests evolution:
 
-1. Read all Active Entries from `evolution-log.md`.
-2. Group entries that describe the same gap.
-3. Entries with 2+ occurrences become high-priority candidates. Single-occurrence entries are lower priority but still evaluated.
+1. Read all Active Entries from `.sgc/evolution-log.md`.
+2. Search for existing entries with similar gaps before creating new ones.
+3. If a similar entry exists, increment `Recurrence-Count` and update `Last-Seen`.
+4. Entries with `Recurrence-Count >= 2` become high-priority candidates.
 
 ### Phase 3: Filter
 
-Run each candidate through the Triple Verification filter (see `extraction-method.md`):
+Run each candidate through the Triple Verification filter (see `extraction-method.md`), adapted by rule type:
 
+| Rule type | Verification criterion |
+|---|---|
+| Decision Rule (IF-THEN) | Must produce a specific next action |
+| Mental Model | Must change priority or tradeoff calculus |
+| Expression DNA | Must produce an observable output constraint |
+| Honest Boundary | Must define a stop/escalate condition |
+
+Additional universal checks:
 - **Cross-domain**: Does this apply to a React frontend and a Rust backend equally?
-- **Generative**: Does it strictly dictate the agent's next action?
-- **Exclusive**: If inverted, is it still a coherent (though different) engineering philosophy?
+- **Exclusive**: If inverted, is it still a coherent engineering philosophy?
 
 | Checks passed | Outcome |
 |---|---|
-| 3/3 | Candidate for SKILL.md |
-| 2/3 | Heuristic for a reference file |
-| 0-1/3 | Discard |
+| All criteria met | Candidate for SKILL.md |
+| Most criteria met | Heuristic for a reference file |
+| Few or none met | Discard |
 
 ### Phase 4: Place
 
@@ -71,6 +99,14 @@ Map accepted rules to SKILL.md sections:
 | Capability limit | Honest Boundaries |
 | Detailed example or edge case | Appropriate reference file |
 
+### Phase 5: Promote
+
+After a rule is placed in SKILL.md:
+
+1. Update the original entry: `**Status**: promoted`
+2. Add `**Promoted**: Decision Rules | Mental Models | Expression DNA | Honest Boundaries`
+3. If the learning is broadly applicable beyond the skill, suggest promoting to the project's `CLAUDE.md` or equivalent.
+
 ## Size Management
 
 SKILL.md must stay near 150 lines. When an addition would exceed 155 lines:
@@ -83,12 +119,14 @@ Hard cap: 225 lines (150% of target). Above this, the pipeline MUST move content
 ## Safety Constraints
 
 - **Human confirmation**: Never edit SKILL.md without user approval. Present the proposed change, the Triple Verification results, and the target section.
+- **Project-local capture**: Write captures to `.sgc/` in the project directory, never to the globally installed skill package.
 - **Git checkpoint**: Before any SKILL.md edit, ensure the working directory is clean or create a new branch (e.g., `git checkout -b sgc-evolution`). This prevents mixing rule updates with application code.
 - **One rule per cycle**: Do not batch multiple rule changes. Each rule update is a separate proposal, evaluation, and confirmation.
 - **No silent edits**: The evolution mechanism modifies SKILL.md only through explicit, user-approved edits.
 
 ## Log Maintenance
 
-- After a candidate is accepted or rejected, move its entry from Active Entries to Processed Entries with the outcome noted.
-- When Processed Entries exceed 50 entries, remove the oldest to prevent unbounded growth.
-- Active Entries with no activity for 30 days should be evaluated or discarded.
+- After a candidate is accepted or rejected, update its entry status in `.sgc/evolution-log.md`.
+- When entries exceed 50 total, archive the oldest resolved/rejected entries to prevent unbounded growth.
+- Active entries with no activity for 30 days should be evaluated or discarded.
+- Run `.sgc/evolution-log.md` review before starting a major task to check for relevant past learnings.

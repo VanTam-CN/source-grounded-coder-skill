@@ -19,13 +19,7 @@ Most coding agents share the same failure modes: hallucinated file paths, oversi
 ## Quick Start
 
 ```sh
-# Install globally (Claude Code)
-cp -R skills/sgc ~/.claude/skills/sgc
-
-# Or use the interactive installer
-node scripts/install.mjs
-
-# Validate the skill package
+node scripts/install.mjs --platform claude-code --force
 node scripts/validate-skill.mjs
 ```
 
@@ -37,35 +31,7 @@ Use $sgc to fix this bug. Read the code first, make the smallest safe change, an
 
 ## Installation
 
-### Claude Code
-
-```sh
-cp -R skills/sgc ~/.claude/skills/sgc
-```
-
-Claude Code auto-discovers skills from `~/.claude/skills/` on session start.
-
-### Codex
-
-```sh
-cp -R skills/sgc ~/.codex/skills/sgc
-```
-
-Includes `agents/openai.yaml` for Codex UI metadata.
-
-### OpenCode
-
-```sh
-cp -R skills/sgc ~/.config/opencode/skills/sgc
-```
-
-### OpenClaw / .agents tools
-
-```sh
-cp -R skills/sgc ~/.agents/skills/sgc
-```
-
-### Interactive Installer
+### Interactive Installer (recommended)
 
 ```sh
 node scripts/install.mjs                    # Choose interactively
@@ -74,24 +40,26 @@ node scripts/install.mjs --target ./skills  # Custom path
 node scripts/install.mjs --platform claude-code --force  # Replace existing
 ```
 
-### Project-Local Install
+### Manual Install
 
 ```sh
-mkdir -p .claude/skills
-cp -R skills/sgc .claude/skills/sgc
+rm -rf ~/.claude/skills/sgc  # Clean old version first
+cp -R skills/sgc ~/.claude/skills/sgc
 ```
+
+For other hosts, replace the target path: `~/.codex/skills/`, `~/.config/opencode/skills/`, `~/.agents/skills/`.
 
 ## Compatibility
 
-| Host | Status | Notes |
-|------|--------|-------|
-| Claude Code | Full | Auto-discovers from `~/.claude/skills/` |
-| Codex | Full | `SKILL.md` + `agents/openai.yaml` UI metadata |
-| OpenCode | Full | Reads `SKILL.md` from configured skill paths |
-| OpenClaw | Full | Reads `SKILL.md` from `.agents/skills/` |
-| Other SKILL.md hosts | Full | Any agent that discovers `SKILL.md` files |
+| Host | Status | Required Capabilities |
+|------|--------|-----------------------|
+| Claude Code | Supported | File read/search/edit, shell, MCP docs (optional), browser (optional) |
+| Codex | Supported | File read/search/edit, shell, `agents/openai.yaml` UI metadata |
+| OpenCode | Supported | File read/search/edit, shell, SKILL.md discovery |
+| OpenClaw | Supported | File read/search/edit, shell, `.agents/skills/` discovery |
+| Other hosts | Supported | File read/search/edit, shell |
 
-No runtime dependencies. Requires host support for file read/search/edit and command execution.
+The skill runtime has no dependencies. The installer and validator require **Node >= 18** (`fs.cp` needs Node 18+).
 
 ## How It Works
 
@@ -118,7 +86,8 @@ skills/sgc/
     ├── agentic-coding-patterns.md        # 7 expanded coding-agent heuristics
     ├── extraction-method.md              # Triple Verification distillation methodology
     ├── evolution-method.md               # Self-evolution distillation pipeline
-    ├── evolution-log.md                  # Captured failures and candidate rule updates
+    ├── evolution-log.md                  # Captured failures and candidate rule updates (template)
+    ├── rule-provenance.md                # Audit trail for every rule (verified scores)
     └── verification-playbook.md          # Evidence patterns by change type
 ```
 
