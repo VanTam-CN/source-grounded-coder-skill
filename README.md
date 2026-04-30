@@ -144,7 +144,7 @@ Capture failures during work → Cluster similar gaps → Filter through Triple 
 
 When the skill's guidance is insufficient during a task, the agent captures the gap in `references/evolution-log.md`. When enough evidence accumulates, the distillation pipeline proposes a rule update through the existing Triple Verification filter. All SKILL.md edits require human confirmation and use git checkpoints for rollback.
 
-See [references/evolution-method.md](skills/sgc/references/evolution-method.md) for the full methodology.
+See [references/evolution-method.md](skills/sgc/references/evolution-method.md) for the full methodology. You can manually trigger this by telling the agent: *"Review evolution-log.md and propose updates."*
 
 ## Verification
 

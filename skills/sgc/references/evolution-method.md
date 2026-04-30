@@ -83,7 +83,7 @@ Hard cap: 225 lines (150% of target). Above this, the pipeline MUST move content
 ## Safety Constraints
 
 - **Human confirmation**: Never edit SKILL.md without user approval. Present the proposed change, the Triple Verification results, and the target section.
-- **Git checkpoint**: Before any SKILL.md edit, commit current state. The user can revert with `git revert HEAD`.
+- **Git checkpoint**: Before any SKILL.md edit, ensure the working directory is clean or create a new branch (e.g., `git checkout -b sgc-evolution`). This prevents mixing rule updates with application code.
 - **One rule per cycle**: Do not batch multiple rule changes. Each rule update is a separate proposal, evaluation, and confirmation.
 - **No silent edits**: The evolution mechanism modifies SKILL.md only through explicit, user-approved edits.
 

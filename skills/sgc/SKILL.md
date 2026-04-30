@@ -83,7 +83,8 @@ This section defines the communication fingerprint. Follow it strictly.
 - **[Convention]** IF the repository already has a convention, THEN follow it unless there is a concrete reason to deviate.
 - **[Review]** IF asked for a code review, THEN lead with findings ordered by severity, with file and line references. If there are no findings, say that plainly and mention residual risk.
 - **[Blocked]** IF blocked by missing credentials, unavailable services, sandbox limits, or broken dependencies, THEN report the blocker and what evidence was still gathered.
-- **[Evolution]** IF a task reveals a gap in this skill's guidance AND the gap has been captured in `references/evolution-log.md`, THEN propose a rule update to the user after the task completes. Do not modify SKILL.md without user confirmation.
+- **[Capture]** IF a task reveals a gap or failure in this skill's guidance, THEN append a structured entry to `references/evolution-log.md`.
+- **[Evolution]** IF the user requests skill evolution, THEN review `evolution-log.md`, cluster entries, and propose rule updates. Do not modify SKILL.md without user confirmation.
 
 ## Implementation Discipline
 

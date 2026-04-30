@@ -59,6 +59,7 @@ Verification means executing the changed behavior and comparing observed output 
 - Validate syntax.
 - Run dry-run commands where possible.
 - Confirm referenced environment variables, secrets, and paths actually line up.
+- Use available MCP servers to verify cloud resources or external states if configured.
 - Avoid applying changes to shared systems without explicit authorization.
 
 ## Adversarial Probes
