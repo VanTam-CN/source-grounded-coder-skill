@@ -1,6 +1,6 @@
 # Extraction Method
 
-This skill distills reusable engineering behavior from Claude Code's system instructions, tool contracts, and operational patterns without copying proprietary prompt text or source code.
+This skill distills reusable engineering behavior from observable host behavior, public documentation, and operational patterns without copying proprietary prompt text or source code.
 
 ## Why Extract From Claude Code
 
@@ -17,11 +17,17 @@ The goal is not to imitate Claude Code's product identity. The goal is to revers
 
 ## Distillation Filter (Triple Verification)
 
-A candidate rule belongs in the skill only if it passes all three checks:
+A candidate rule belongs in the skill only if it passes all applicable checks. Verification criteria vary by rule type:
 
-1. **Cross-domain (跨域复现)**: Does this rule apply to a React frontend and a Rust backend equally? Rules that only work for one language or framework are too narrow.
-2. **Generative (生成力)**: Does this rule strictly dictate the *next action* the agent takes? A rule like "Use grep first" generates a tool call. A rule like "Be careful" does not.
-3. **Exclusive (排他性)**: If inverted, is it still a valid (though different) engineering philosophy? "Search before read" vs "read everything" are both coherent strategies. We encode Claude Code's approach because the evidence shows it is more effective for large codebases.
+**Universal checks** (all rule types):
+- **Cross-domain (跨域复现)**: Does this rule apply to a React frontend and a Rust backend equally? Rules that only work for one language or framework are too narrow.
+- **Exclusive (排他性)**: If inverted, is it still a valid (though different) engineering philosophy? "Search before read" vs "read everything" are both coherent strategies. We encode one approach because the evidence shows it is more effective.
+
+**Type-specific checks**:
+- **Decision Rule**: Must strictly dictate the *next action* the agent takes. "Use grep first" generates a tool call. "Be careful" does not.
+- **Mental Model**: Must change a priority or tradeoff calculus. "Terminal is truth" shifts shell output above assumptions.
+- **Expression DNA**: Must produce an observable output constraint. "One-sentence updates" constrains response length.
+- **Honest Boundary**: Must define a stop or escalation condition. "Cannot access files outside sandbox" defines when to ask the user.
 
 **If a rule passes only 1-2 checks**, downgrade it to a heuristic or discard it. **0 checks** means it is generic advice that adds no value.
 
@@ -29,13 +35,13 @@ A candidate rule belongs in the skill only if it passes all three checks:
 
 Use these categories when refreshing the skill:
 
-1. **System behavior instructions**: identity, task execution rules, communication style, safety boundaries. (Primary source: Claude Code system prompt)
+1. **Observable host behavior**: identity, task execution rules, communication style, safety boundaries. (Primary source: observable agent behavior in real sessions)
 2. **Tool contracts**: file reading, exact editing, search, shell execution, permissions, and failure modes. (Primary source: tool descriptions and permission model)
 3. **Planning and task tracking**: when to create a plan, how to update it, and when to skip it. (Primary source: Plan mode and TodoWrite behavior)
 4. **Agent orchestration**: when to use a subagent, when to keep work local, how to synthesize findings. (Primary source: Agent tool and team coordination)
-5. **Verification specialists**: how to test behavior directly, how to probe edge cases, and how to format evidence. (Primary source: superpowers verification skills)
-6. **Error handling**: how failures are classified, surfaced, retried, or escalated. (Primary source: debugging skills and systematic-debugging)
-7. **Expression DNA**: communication fingerprint, taboos, reporting format, tone. (Primary source: system prompt "Tone and style" section)
+5. **Verification specialists**: how to test behavior directly, how to probe edge cases, and how to format evidence. (Primary source: verification skill patterns)
+6. **Error handling**: how failures are classified, surfaced, retried, or escalated. (Primary source: debugging patterns and systematic-debugging)
+7. **Expression DNA**: communication fingerprint, taboos, reporting format, tone. (Primary source: observable output patterns)
 
 ## Extraction Pipeline
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { cp, mkdir, stat } from 'node:fs/promises'
+import { cp, mkdir, rm, stat } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -119,6 +119,10 @@ async function main() {
     throw new Error(
       `Destination already exists: ${destination}\nRe-run with --force to replace it.`,
     )
+  }
+
+  if ((await exists(destination)) && args.force) {
+    await rm(destination, { recursive: true, force: true })
   }
 
   await mkdir(installRoot, { recursive: true })

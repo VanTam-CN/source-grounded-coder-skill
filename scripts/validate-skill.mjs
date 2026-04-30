@@ -226,8 +226,33 @@ async function validateSkill(skillName) {
   if (lineCount > 500) {
     fail(`${skillName}: SKILL.md should stay under 500 lines`)
   }
+  if (lineCount > 155) {
+    console.warn(`WARN ${skillName}: SKILL.md exceeds 155 lines (current: ${lineCount})`)
+  }
 
   await validateReferenceLinks(skillDir, skillName, content)
+
+  // Check required reference files exist
+  const refsDir = path.join(skillDir, 'references')
+  try {
+    const refFiles = await readdir(refsDir)
+    const refLinks = []
+    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g
+    let match
+    while ((match = linkPattern.exec(content)) !== null) {
+      const target = match[2].trim()
+      if (target.startsWith('references/') && target.endsWith('.md')) {
+        refLinks.push(target.replace('references/', ''))
+      }
+    }
+    for (const link of refLinks) {
+      if (!refFiles.includes(link)) {
+        fail(`${skillName}: referenced file missing: ${link}`)
+      }
+    }
+  } catch {
+    // No references directory is acceptable
+  }
 
   const requiredSections = [
     '## Role',

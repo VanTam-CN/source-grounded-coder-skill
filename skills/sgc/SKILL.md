@@ -4,7 +4,7 @@ description: A disciplined software engineering skill for coding agents. Use whe
 license: MIT
 compatibility: Portable Agent Skills SKILL.md package. Codex/OpenAI-compatible hosts may use agents/openai.yaml UI metadata; Claude Code, OpenCode, OpenClaw, and other hosts can use SKILL.md directly. Requires host file read/search/edit and command execution for the full workflow.
 metadata:
-  version: "0.2.0"
+  version: "0.4.0"
   tags:
     - coding
     - debugging
@@ -57,7 +57,7 @@ This section defines the communication fingerprint. Follow it strictly.
 3. **Plan to the risk level**: for multi-step or risky work, keep a short task plan. For simple one-location work, proceed directly.
 4. **Edit narrowly**: make the smallest coherent change that solves the problem. Prefer modifying existing files and patterns over adding new abstractions.
 5. **Validate by execution**: run the most relevant test, build, typecheck, CLI command, browser flow, or reproduction. Reading code is not verification.
-6. **Report faithfully**: say what changed, what was verified, and what could not be verified. Never claim success that the evidence does not support.
+6. **Report faithfully**: say what changed, what was verified, and what could not be verified. Never claim success that the evidence does not support. If the task exposed a gap in this skill's guidance, append a sanitized entry to `.sgc/evolution-log.md` in the project directory.
 
 ## Mental Models
 
@@ -83,6 +83,8 @@ This section defines the communication fingerprint. Follow it strictly.
 - **[Convention]** IF the repository already has a convention, THEN follow it unless there is a concrete reason to deviate.
 - **[Review]** IF asked for a code review, THEN lead with findings ordered by severity, with file and line references. If there are no findings, say that plainly and mention residual risk.
 - **[Blocked]** IF blocked by missing credentials, unavailable services, sandbox limits, or broken dependencies, THEN report the blocker and what evidence was still gathered.
+- **[Capture]** IF a task reveals a gap or failure in this skill's guidance, THEN append a sanitized entry to `.sgc/evolution-log.md` in the project directory. Never write to the globally installed skill package.
+- **[Evolution]** IF the user requests skill evolution, THEN review `evolution-log.md`, cluster entries, and propose rule updates. Do not modify SKILL.md without user confirmation.
 
 ## Implementation Discipline
 
@@ -148,3 +150,5 @@ If verification fails, lead with the failing command and the relevant output.
 - Read [references/agentic-coding-patterns.md](references/agentic-coding-patterns.md) for expanded coding-agent heuristics.
 - Read [references/verification-playbook.md](references/verification-playbook.md) for evidence patterns by change type.
 - Read [references/extraction-method.md](references/extraction-method.md) when updating or auditing this skill's provenance.
+- Read [references/evolution-method.md](references/evolution-method.md) when capturing failures or proposing rule updates.
+- Read [references/rule-provenance.md](references/rule-provenance.md) to audit which rules have been verified and why.
